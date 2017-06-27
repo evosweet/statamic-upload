@@ -24,7 +24,7 @@ class PdfUploadController extends Controller
     {
          // validate upload
          $this->validate($request, [
-             'pdf' => 'mimes:pdf,sql,js|max:1000000'
+             'pdf' => 'mimes:pdf|max:1000000'
          ]);
         //get file 
         $pdf = $request->file('upload');
@@ -49,22 +49,31 @@ class PdfUploadController extends Controller
         return  $this->view('asset', compact('assets'));
     }
     public function getEdit(Request $request){
+        // get the asset id
         $id  = $request->id;
+        // find asset by id
         $asset = Asset::find($id);
+        // put asset details into array
         $file_detail = array(
             'file_id'=>$asset->id(),
             'file_path' => $asset->path(),
             );
+        // return details to front end
         return $this->view('edit', compact('file_detail'));
     }
 
     public function updateAsset(Request $request){
+        // get asset id
         $id = $request->id;
+        // find asset by id
         $asset = Asset::find($id);
+        // set alt 
         $asset->set('alt', $request->alt);
+        // set year
         $asset->set('year', $request->year);
-        $asset->set('download', $request->download);
+        // save asset details to yaml file
         $asset->save();
+        // return to form flash update message
         return  back()->with('success', 'File Updated');
     }
 
